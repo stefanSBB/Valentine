@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Will You Be My Valentine? 💝</title>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        .container {
+            text-align: center;
+            background: white;
+            padding: 60px 40px;
+            border-radius: 30px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 500px;
+            width: 90%;
+        }
+
+        .emoji {
+            font-size: 100px;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0px);
+            }
+            50% {
+                transform: translateY(-20px);
+            }
+        }
+
+        h1 {
+            color: #e91e63;
+            font-size: 36px;
+            margin: 20px 0;
+            font-weight: 700;
+        }
+
+        .buttons-container {
+            position: relative;
+            margin-top: 40px;
+            min-height: 100px;
+            display: flex;
+            gap: 20px;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        button {
+            padding: 15px 40px;
+            font-size: 20px;
+            font-weight: 600;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .yes-btn {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+        }
+
+        .yes-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(245, 87, 108, 0.4);
+        }
+
+        .no-btn {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            position: relative;
+            transition: all 0.15s ease-out;
+        }
+
+        .success-message {
+            margin-top: 30px;
+            padding: 20px;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            border-radius: 15px;
+            font-size: 24px;
+            font-weight: 600;
+            animation: slideIn 0.5s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .hearts {
+            position: fixed;
+            pointer-events: none;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            overflow: hidden;
+        }
+
+        .heart {
+            position: absolute;
+            font-size: 30px;
+            animation: fall linear infinite;
+        }
+
+        @keyframes fall {
+            0% {
+                top: -10%;
+                opacity: 1;
+            }
+            100% {
+                top: 110%;
+                opacity: 0;
+            }
+        }
+
+        /* Mobile responsiveness */
+        @media (max-width: 768px) {
+            .container {
+                padding: 40px 20px;
+                width: 95%;
+            }
+
+            .emoji {
+                font-size: 60px;
+            }
+
+            h1 {
+                font-size: 28px;
+            }
+
+            button {
+                padding: 12px 30px;
+                font-size: 18px;
+            }
+
+            .buttons-container {
+                flex-direction: column;
+                gap: 15px;
+                min-height: 150px;
+            }
+
+            .success-message {
+                font-size: 20px;
+                padding: 15px;
+            }
+
+            .cat-image {
+                max-width: 250px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 30px 15px;
+            }
+
+            .emoji {
+                font-size: 50px;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+
+            button {
+                padding: 10px 25px;
+                font-size: 16px;
+                width: 100%;
+                max-width: 200px;
+            }
+
+            .success-message {
+                font-size: 18px;
+            }
+
+            .cat-image {
+                max-width: 200px;
+            }
+        }
+
+        .cat-image {
+            max-width: 400px;
+            width: 100%;
+            height: auto;
+            border-radius: 20px;
+            margin-top: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            animation: slideIn 0.5s ease-out;
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        function Valentine() {
+            const [answered, setAnswered] = useState(false);
+            const [noPosition, setNoPosition] = useState({ x: 0, y: 0 });
+            const [showHearts, setShowHearts] = useState(false);
+
+            const handleYes = () => {
+                setAnswered(true);
+                setShowHearts(true);
+            };
+
+            const handleNoHover = (e) => {
+                const button = e.target;
+                const container = button.parentElement;
+                const containerRect = container.getBoundingClientRect();
+                
+                // Calculate random position within container
+                const maxX = containerRect.width - button.offsetWidth;
+                const maxY = containerRect.height - button.offsetHeight;
+                
+                const randomX = Math.random() * maxX - maxX / 2;
+                const randomY = Math.random() * maxY - maxY / 2;
+                
+                setNoPosition({ x: randomX, y: randomY });
+            };
+
+            const Hearts = () => {
+                const hearts = ['💕', '💖', '💗', '💓', '💝', '❤️', '💘'];
+                const [heartElements, setHeartElements] = useState([]);
+
+                useEffect(() => {
+                    if (!showHearts) return;
+
+                    const interval = setInterval(() => {
+                        const newHeart = {
+                            id: Date.now() + Math.random(),
+                            emoji: hearts[Math.floor(Math.random() * hearts.length)],
+                            left: Math.random() * 100,
+                            duration: 3 + Math.random() * 2,
+                            delay: Math.random() * 2
+                        };
+
+                        setHeartElements(prev => [...prev, newHeart]);
+
+                        setTimeout(() => {
+                            setHeartElements(prev => prev.filter(h => h.id !== newHeart.id));
+                        }, (newHeart.duration + newHeart.delay) * 1000);
+                    }, 300);
+
+                    return () => clearInterval(interval);
+                }, [showHearts]);
+
+                return (
+                    <div className="hearts">
+                        {heartElements.map(heart => (
+                            <div
+                                key={heart.id}
+                                className="heart"
+                                style={{
+                                    left: `${heart.left}%`,
+                                    animationDuration: `${heart.duration}s`,
+                                    animationDelay: `${heart.delay}s`
+                                }}
+                            >
+                                {heart.emoji}
+                            </div>
+                        ))}
+                    </div>
+                );
+            };
+
+            return (
+                <>
+                    {showHearts && <Hearts />}
+                    <div className="container">
+                        <div className="emoji">💝</div>
+                        <h1>Will You Be My Valentine?</h1>
+                        
+                        {!answered ? (
+                            <div className="buttons-container">
+                                <button 
+                                    className="no-btn"
+                                    onMouseEnter={handleNoHover}
+                                    onTouchStart={handleNoHover}
+                                    style={{
+                                        transform: `translate(${noPosition.x}px, ${noPosition.y}px)`
+                                    }}
+                                >
+                                    No 😢
+                                </button>
+                                <button className="yes-btn" onClick={handleYes}>
+                                    Yes! 💕
+                                </button>
+                            </div>
+                        ) : (
+                            <div className="success-message">
+                                🎉 I love you! 💖
+                                <img 
+                                    src="cat.jpg" 
+                                    alt="Happy cat with flower" 
+                                    className="cat-image"
+                                />
+                            </div>
+                        )}
+                    </div>
+                </>
+            );
+        }
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<Valentine />);
+    </script>
+</body>
+</html>
